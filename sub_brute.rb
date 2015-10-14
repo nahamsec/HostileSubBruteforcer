@@ -10,7 +10,7 @@ require 'timeout'
 =begin
 ###############################################
 Pure subdomain bruteforcer:
-Will check and see if host is poiting to AWS
+Will check and see if host is pointing to AWS
 Alrets if a subdomain returns 404 so you can
 manually check and see if it's hosted on a
 3rd party website and if they are registered
@@ -62,23 +62,28 @@ def host(get_host) #get cname data and check response code for 404 and alert use
     github_error = "There isn't a GitHub Pages site here".red.bold
     shopify_error = "Sorry, this shop is currently unavailable.".red.bold
     tumblr_error = "There's nothing here.".red.bold
+    wpengine_error = "The site you were looking for couldn't be found.".red.bold
 
     check_it = ""
     real_host = res.first.name.to_s
       check_real_host = "http://"+real_host
       check_it = Net::HTTP.get(URI.parse(check_real_host))
       if  (check_it.index("There is no app configured at that hostname"))
-          puts "- Subdomain poiting to a non-existing Heroku app showing: ".red + heroku_error
+          puts "- Subdomain pointing to a non-existing Heroku app showing: ".red + heroku_error
       elsif (check_it.index("NoSuchBucket"))
-        puts "- Subdomain poiting to an unclaimed AmazonAWS bucket showing: ".red + amazonAWS_error
+        puts "- Subdomain pointing to an unclaimed AmazonAWS bucket showing: ".red + amazonAWS_error
       elsif (check_it.index("No Such Account"))
-        puts "- Subdomain poiting to a non-existing SquareSpace account showing: ".red + squarespace_error
+        puts "- Subdomain pointing to a non-existing SquareSpace account showing: ".red + squarespace_error
+      elsif (check_it.index("You're Almost There"))
+        puts "- Subdomain pointing to a non-existing SquareSpace account showing: ".red + squarespace_error
       elsif (check_it.index("There isn't a GitHub Pages site here"))
-        puts "- Subdomain poiting to a non-existing Github subdomain indicating".red + github_error
+        puts "- Subdomain pointing to a non-existing Github subdomain indicating".red + github_error
       elsif (check_it.index("Sorry, this shop is currently unavailable."))
-        puts "- Subdomain poiting to a non-existing Shopify subdomain indicating".red + shopify_error
+        puts "- Subdomain pointing to a non-existing Shopify subdomain indicating".red + shopify_error
       elsif (check_it.index("There's nothing here."))
-        puts "- Subdomain poiting to a non-existing Tumblr subdomain indicating".red + tumblr_error
+        puts "- Subdomain pointing to a non-existing Tumblr subdomain indicating".red + tumblr_error
+      elsif  (check_it.index("The site you were looking for couldn't be found."))
+        puts "- Subdomain pointing to a non-existing WPEngine subdomain indicating".red + wpengine_error
       end
     puts ("- Seems like " + get_host +  " is an alias for " + real_host).brown
   end
@@ -95,7 +100,7 @@ def get_response_code(targetURI)
         puts getCode + " " + targetURI.green + " ---> " + ip_address + " "
         host(targetURI)
         if getCode == "404"
-          puts "----> Check for further information on where this is poiting to.".red
+          puts "----> Check for further information on where this is pointing to.".red
         end
         }
 
