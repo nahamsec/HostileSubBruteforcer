@@ -60,7 +60,8 @@ def host(get_host) #get cname data and check response code for 404 and alert use
     amazonAWS_error = "NoSuchBucket".red.bold
     squarespace_error = "No Such Account".red.bold
     github_error = "There isn't a GitHub Pages site here".red.bold
-
+    shopify_error = "Sorry, this shop is currently unavailable.".red.bold
+    tumblr_error = "There's nothing here.".red.bold
 
     check_it = ""
     real_host = res.first.name.to_s
@@ -74,6 +75,10 @@ def host(get_host) #get cname data and check response code for 404 and alert use
         puts "- Subdomain poiting to a non-existing SquareSpace account showing: ".red + squarespace_error
       elsif (check_it.index("There isn't a GitHub Pages site here"))
         puts "- Subdomain poiting to a non-existing Github subdomain indicating".red + github_error
+      elsif (check_it.index("Sorry, this shop is currently unavailable."))
+        puts "- Subdomain poiting to a non-existing Shopify subdomain indicating".red + shopify_error
+      elsif (check_it.index("There's nothing here."))
+        puts "- Subdomain poiting to a non-existing Tumblr subdomain indicating".red + tumblr_error
       end
     puts ("- Seems like " + get_host +  " is an alias for " + real_host).brown
   end
@@ -112,7 +117,7 @@ File.open(file_name, "r") do |f|
     end
   end
 end
-
+system "clear"
 puts "Enter a domain you'd like to brute force and look for hostile subdomain takeover(example: yahoo.com)"
 getURI = gets.chomp
 openFile "list.txt", getURI
