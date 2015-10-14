@@ -85,7 +85,10 @@ def host(get_host) #get cname data and check response code for 404 and alert use
       elsif  (check_it.index("The site you were looking for couldn't be found."))
         puts "- Subdomain pointing to a non-existing WPEngine subdomain indicating".red + wpengine_error
       end
-    puts ("- Seems like " + get_host +  " is an alias for " + real_host).brown
+      if (real_host = get_host)
+      else
+        puts ("- Seems like " + get_host +  " is an alias for " + real_host).brown
+      end
   end
   return
 end
