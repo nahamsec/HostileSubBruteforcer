@@ -11,7 +11,7 @@ There may be some false positives depending on the host configurations.
 
 `````
 Enter a domain you'd like to brute force and look for hostile subdomain takeover(example: yahoo.com)
-916god.com
+example.com
 200 0.example.com ---> 198.185.159.177
 - Subdomain pointing to a non-existing SquareSpace account showing: No Such Account
 - Seems like 0.example.com is an alias for exampledomain111.squarespace.com
