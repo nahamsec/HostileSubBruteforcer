@@ -69,7 +69,7 @@ def host(get_host) #get cname data and check response code for 404 and alert use
       check_real_host = "http://"+real_host
       check_it = Net::HTTP.get(URI.parse(check_real_host))
       if  (check_it.index("There is no app configured at that hostname"))
-          puts "- Subdomain pointing to a non-existing Heroku app showing: ".red + heroku_error
+        puts "- Subdomain pointing to a non-existing Heroku app showing: ".red + heroku_error
       elsif (check_it.index("NoSuchBucket"))
         puts "- Subdomain pointing to an unclaimed AmazonAWS bucket showing: ".red + amazonAWS_error
       elsif (check_it.index("No Such Account"))
@@ -85,47 +85,57 @@ def host(get_host) #get cname data and check response code for 404 and alert use
       elsif  (check_it.index("The site you were looking for couldn't be found."))
         puts "- Subdomain pointing to a non-existing WPEngine subdomain indicating".red + wpengine_error
       end
-      if (real_host = get_host)
-      else
+      #if (real_host = get_host)
+      #else
         puts ("- Seems like " + get_host +  " is an alias for " + real_host).brown
-      end
+      #end
   end
   return
 end
 
-def get_response_code(targetURI)
-  target = "http://"+targetURI
-    begin
-      Timeout::timeout(5) {
-        res = Net::HTTP.get_response(URI.parse(target))
-        getCode = res.code
-        ip_address = Resolv.getaddress targetURI
-        puts getCode + " " + targetURI.green + " ---> " + ip_address + " "
-        host(targetURI)
-        if getCode == "404"
-          puts "----> Check for further information on where this is pointing to.".red
+def find_subs(targetURI)
+      target = "http://"+targetURI
+        begin
+          Timeout::timeout(5) {
+            res = Net::HTTP.get_response(URI.parse(target))
+            getCode = res.code
+            ip_address = Resolv.getaddress targetURI
+            if (getCode != "503")
+              File.open("output.txt", "a") do |file|
+                file.puts targetURI
+              end
+              puts getCode + " " + targetURI.green + " ---> " + ip_address + " "
+              createURI targetURI
+              host(targetURI)
+            else
+            end
+
+            if getCode == "404"
+              puts "----> Check for further information on where this is pointing to.".red
+            end
+          }
+
+        rescue Timeout::Error
+        rescue Errno::EHOSTUNREACH
+        rescue URI::InvalidURIError
+        rescue SocketError
+        rescue Errno::ECONNREFUSED
+        rescue Resolv::ResolvError
         end
-        }
-
-  rescue Timeout::Error
-  rescue URI::InvalidURIError
-  rescue SocketError
-  rescue Errno::ECONNREFUSED
-  end
-
 end
 
 
-
-def openFile(file_name, getURI)
-File.open(file_name, "r") do |f|
-  f.each_line do |line|
-    targetURI = line.chomp + "." + getURI
-    get_response_code(targetURI)
+def createURI(getURI)
+  File.open("list.txt", "r") do |f|
+    f.each_line do |line|
+      targetURI = line.chomp + "." + getURI
+      find_subs targetURI
     end
   end
 end
+
+File.open("output.txt", "w")
 system "clear"
-puts "Enter a domain you'd like to brute force and look for hostile subdomain takeover(example: yahoo.com)"
+puts "Enter a domain you'd like to brute force and look for hostile subdomain takeover(example: hackme.ltd)"
 getURI = gets.chomp
-openFile "list.txt", getURI
+createURI getURI
