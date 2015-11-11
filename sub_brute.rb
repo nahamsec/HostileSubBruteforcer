@@ -96,7 +96,7 @@ end
 def find_subs(targetURI)
       target = "http://"+targetURI
         begin
-          Timeout::timeout(5) {
+          #Timeout::timeout(600) {
             res = Net::HTTP.get_response(URI.parse(target))
             getCode = res.code
             ip_address = Resolv.getaddress targetURI
@@ -104,7 +104,7 @@ def find_subs(targetURI)
               File.open("output.txt", "a") do |file|
                 file.puts targetURI
               end
-              puts getCode + " " + targetURI.green + " ---> " + ip_address + " "
+              puts  "[#{Time.now.asctime}] " + getCode + " " + targetURI.green + " ---> " + ip_address + " "
               host targetURI
             else
             end
@@ -112,7 +112,7 @@ def find_subs(targetURI)
             if getCode == "404"
               puts "----> Check for further information on where this is pointing to.".red
             end
-          }
+          #}
 
         rescue Timeout::Error
         rescue Errno::EHOSTUNREACH
@@ -120,6 +120,7 @@ def find_subs(targetURI)
         rescue SocketError
         rescue Errno::ECONNREFUSED
         rescue Resolv::ResolvError
+        rescue Errno::ETIMEDOUT
         rescue Errno::ENETUNREACH
         end
 #        recursiveBruteForce
@@ -127,7 +128,7 @@ end
 
 
 def createURI(getURI)
-  File.open("list.txt", "r") do |f|
+  File.open("newlist", "r") do |f|
     f.each_line do |line|
       targetURI = line.chomp + "." + getURI
       find_subs targetURI
@@ -143,12 +144,13 @@ puts "Enter a domain you'd like to brute force and look for hostile subdomain ta
 getURI = gets.chomp
 createURI getURI
 
+puts "\n\n\n\n\nStarting to bruteforce the subdomains using the same wordlist"
 File.open("output.txt", "r").each do |ff|
-  File.open("list.txt", "r").each do |f|
+  File.open("newlist", "r").each do |f|
     ff.each_line do |domain|
-      f.each_line do |line|
-        targetURI = line.chomp + "." + domain.chomp
-        find_subs targetURI
+    f.each_line do |line|
+      targetURI = line.chomp + "." + domain.chomp
+      find_subs targetURI
       end
     end
   end
