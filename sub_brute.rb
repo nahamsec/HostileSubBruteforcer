@@ -128,7 +128,7 @@ end
 
 
 def createURI(getURI)
-  File.open("newlist", "r") do |f|
+  File.open("list.txt", "r") do |f|
     f.each_line do |line|
       targetURI = line.chomp + "." + getURI
       find_subs targetURI
