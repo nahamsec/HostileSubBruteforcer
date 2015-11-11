@@ -7,6 +7,8 @@ This app will bruteforce for exisiting subdomains and provide the following info
 There may be some false positives depending on the host configurations. (Tried to take them out as much as possible)
 Also works recursively at the end to get the subdomains under the ones that it has already found and dumps all your data into an output.txt file just in case (fresh one gets created at the beginning of each process) 
 
+##More info
+http://labs.detectify.com/post/109964122636/hostile-subdomain-takeover-using 
 
 ##Example output
 
