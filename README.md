@@ -4,7 +4,8 @@ This app will bruteforce for exisiting subdomains and provide the following info
    - Host
    - if the 3rd party host has been properly setup. (for example if site.example.com is poiting to a nonexisiting Heroku subdomain, it'll alert you) -> Currently only works with AWS, Github, Heroku, shopify, tumblr and squarespace.
 
-There may be some false positives depending on the host configurations.
+There may be some false positives depending on the host configurations. (Tried to take them out as much as possible)
+Also works recursively at the end to get the subdomains under the ones that it has already found and dumps all your data into an output.txt file just in case (fresh one gets created at the beginning of each process) 
 
 
 ##Example output
