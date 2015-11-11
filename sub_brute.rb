@@ -105,8 +105,7 @@ def find_subs(targetURI)
                 file.puts targetURI
               end
               puts getCode + " " + targetURI.green + " ---> " + ip_address + " "
-              createURI targetURI
-              host(targetURI)
+              host targetURI
             else
             end
 
@@ -121,7 +120,9 @@ def find_subs(targetURI)
         rescue SocketError
         rescue Errno::ECONNREFUSED
         rescue Resolv::ResolvError
+        rescue Errno::ENETUNREACH
         end
+#        recursiveBruteForce
 end
 
 
@@ -134,8 +135,22 @@ def createURI(getURI)
   end
 end
 
+
+
 File.open("output.txt", "w")
 system "clear"
 puts "Enter a domain you'd like to brute force and look for hostile subdomain takeover(example: hackme.ltd)"
 getURI = gets.chomp
 createURI getURI
+
+File.open("output.txt", "r").each do |ff|
+  File.open("list.txt", "r").each do |f|
+    ff.each_line do |domain|
+    f.each_line do |line|
+      targetURI = line.chomp + "." + domain.chomp
+      #puts targetURI
+      find_subs targetURI
+    end
+  end
+end
+end
