@@ -146,7 +146,7 @@ createURI getURI
 
 puts "\n\n\n\n\nStarting to bruteforce the subdomains using the same wordlist"
 File.open("output.txt", "r").each do |ff|
-  File.open("newlist", "r").each do |f|
+  File.open("list.txt", "r").each do |f|
     ff.each_line do |domain|
     f.each_line do |line|
       targetURI = line.chomp + "." + domain.chomp
