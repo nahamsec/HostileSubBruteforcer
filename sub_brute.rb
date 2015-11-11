@@ -146,11 +146,10 @@ createURI getURI
 File.open("output.txt", "r").each do |ff|
   File.open("list.txt", "r").each do |f|
     ff.each_line do |domain|
-    f.each_line do |line|
-      targetURI = line.chomp + "." + domain.chomp
-      #puts targetURI
-      find_subs targetURI
+      f.each_line do |line|
+        targetURI = line.chomp + "." + domain.chomp
+        find_subs targetURI
+      end
     end
   end
-end
 end
