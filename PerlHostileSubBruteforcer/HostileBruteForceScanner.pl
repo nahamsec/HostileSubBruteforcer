@@ -28,13 +28,16 @@ use LWP::UserAgent;
 use LWP::Simple;
 use WWW::Mechanize;
 use HTML::TreeBuilder;
+use Term::ProgressBar;
 # Defines
 my $VER = "0.001a";
+my $ticker = 1;
 my $names = "names.txt";
 my @SECONDSTAGEA;
 my @SECONDSTAGEC;
 my $verbose = 0;
 my $quiet = 0;
+my $pretty = 0;
 my $output = undef;
 my $userAgent = "useragents.txt";
 my $nameserver = "ns.txt";
@@ -53,7 +56,7 @@ $RESPONSE{'WpEngine'} = "The site you were looking for couldn't be found";
 
 
 # Get options
-GetOptions( 'verbose' => \$verbose, 'quiet' => sub { $verbose = 0; $quiet=1; }, "output=s" => \$output, "ns" => \$nameserver, "names=s" => \$names, "useragent=s" => \$userAgent, 'help' => sub { usage(); });
+GetOptions( 'verbose' => \$verbose, 'quiet' => sub { $verbose = 0; $quiet=1; }, "pretty" => \$pretty, "output=s" => \$output, "ns" => \$nameserver, "names=s" => \$names, "useragent=s" => \$userAgent, 'help' => sub { usage(); });
 my $domain = shift;
 my $mech = new WWW::Mechanize;
 if($output) {
@@ -61,6 +64,13 @@ if($output) {
 	print FH "Scan: $domain ";
 	print FH localtime;
 	print FH "\n";
+}
+if($pretty){
+	if(!$output){
+		die "--pretty requires output file";
+	}
+	$pretty = 1;
+	$quiet = 1;
 }
 # Prep name servers #
 open (NS, $nameserver) or die "Cannot open $nameserver: $!\n";
@@ -70,12 +80,25 @@ close(NS);
 # Prep names #
 open (NAMES, $names) or die "Cannot open $names: $!\n";
 my @NAMES = <NAMES>;
+my $MX = undef;
+my $MAX = @NAMES;
+if($MAX > 1000){
+	$MX = $MAX/1000;
+}elsif($MAX < 1000 && $MAX > 100){
+	$MX = $MAX/100;
+}else{
+	$MX = $MAX;
+}
+$MAX=$MX;
 close(NAMES);
 
 #Prep User Agents #
 open (UA, $userAgent) or die "Cannot open $userAgent: $!\n";
 my @UA = <UA>;
 close (UA);
+
+#progress
+my $progress = Term::ProgressBar->new($MAX) if $pretty;
 
 brute($domain);
 secondstage();
@@ -88,6 +111,10 @@ sub brute {
 		chomp($n);
 		my $host = "$n.$domain";
 		my $reply = $resolver->query($host);
+		if(1000 % $ticker == 0){
+			$progress->update($_) if $pretty;
+		}
+		$ticker++;
 		if($reply){
 			my $rr = ($reply->answer)[0];
 			if($rr->type eq "A"){
@@ -104,7 +131,7 @@ sub brute {
 				my $msg = "[$domain] Resolver found possible sub: $host";
 				spit(1,$msg,0);
 			}else{
-				my $msg = "[$host] - [$domain] Query Failed: ".$resolver->errorstring;
+				my $msg = "$host\t\t\t Query Failed: ".$resolver->errorstring;
 				spit(1,$msg,0);
 			}
 		}
