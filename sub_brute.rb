@@ -94,19 +94,13 @@ def host(get_host) #get cname data and check response code for 404 and alert use
 end
 
 def find_subs(targetURI)
-    begin
       target = "http://"+targetURI
+        begin
           #Timeout::timeout(600) {
             res = Net::HTTP.get_response(URI.parse(target))
             getCode = res.code
-            temp_target = "http://ThereIsNoWayThisDomainExists1363635635353gdbdd"+targetURI
-            temp_res = Net::HTTP.get_response(URI.parse(temp_target))
-            ignore_code = temp_res.code
-
-
             ip_address = Resolv.getaddress targetURI
-
-            if (getCode != ignore_code)
+            if (getCode != "503")
               File.open("output.txt", "a") do |file|
                 file.puts targetURI
               end
