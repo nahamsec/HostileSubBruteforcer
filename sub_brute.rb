@@ -145,7 +145,7 @@ end
 File.open("output.txt", "w")
 system "clear"
 puts "Enter a domain you'd like to brute force and look for hostile subdomain takeover(example: hackme.ltd)"
-getURI = gets.chomp
+getURI = STDIN.gets.chomp()
 createURI getURI
 
 puts "\n\n\n\n\n[#{Time.now.asctime}] Starting to bruteforce the subdomains using the same wordlist"
