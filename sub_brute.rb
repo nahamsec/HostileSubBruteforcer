@@ -179,11 +179,11 @@ end
 puts "\n\n\n\n\n[#{Time.now.asctime}] Starting to bruteforce the subdomains using the same wordlist"
 File.open("output.txt", "r").each do |ff|
     ff.each_line do |domain|
-      targetURI = line.chomp + "." + domain.chomp
+      targetURI = domain.chomp
       unless fastmode then
-        createURI getURI
+        createURI targetURI
       else 
-        createURIThreaded getURI
+        createURIThreaded targetURI
       end
     end
 end
