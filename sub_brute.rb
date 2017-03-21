@@ -140,22 +140,50 @@ def createURI(getURI)
   end
 end
 
+def createURIThreaded(getURI)
+  total_threads = 100 #safe value
+  queue = Queue.new 
+  File.open("list.txt", "r") do |f|
+    f.each_line do |line|
+      targetURI = line.chomp + "." + getURI
+      queue << targetURI
+    end
+    workers = total_threads.times.map do
+      Thread.new do
+        begin
+          while targetURI = queue.pop(true)
+            find_subs targetURI
+          end
+        rescue ThreadError
+        end
+      end
+    end
+    workers.map(&:join)
+  end
+end
+
 
 
 File.open("output.txt", "w")
 system "clear"
 puts "Enter a domain you'd like to brute force and look for hostile subdomain takeover(example: hackme.ltd)"
+fastmode = ARGV.include? '--fast'
+ARGV.clear
 getURI = gets.chomp
-createURI getURI
+unless fastmode then
+  createURI getURI
+else 
+  createURIThreaded getURI
+end
 
 puts "\n\n\n\n\n[#{Time.now.asctime}] Starting to bruteforce the subdomains using the same wordlist"
 File.open("output.txt", "r").each do |ff|
-  File.open("list.txt", "r").each do |f|
     ff.each_line do |domain|
-    f.each_line do |line|
       targetURI = line.chomp + "." + domain.chomp
-      find_subs targetURI
+      unless fastmode then
+        createURI getURI
+      else 
+        createURIThreaded getURI
       end
     end
-  end
 end
