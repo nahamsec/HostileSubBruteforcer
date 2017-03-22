@@ -43,6 +43,14 @@ example.com
 200 g.example.com ---> 104.238.181.195
 - Seems like g.example.com is an alias for somedomain.anotherexample.com
 `````
+## Experimental  multithread mode
+
+this mode uses multiple threads so it produces results faster. currenly the output is not synchronised.
+to run this mode use ``--fast`` as argument.
+
+```bash
+ruby sub_brute.rb --fast
+```
 
 
 Good luck!
