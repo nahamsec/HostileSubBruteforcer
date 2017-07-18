@@ -6,7 +6,7 @@ HostileSubDomainBruteForcer
 ###############################################
 Pure subdomain bruteforcer:
 Will check and see if host is pointing to AWS
-Alrets if a subdomain returns 404 so you can
+Alerts if a subdomain returns 404 so you can
 manually check and see if it's hosted on a
 3rd party website and if they are registered
 properly or not.
